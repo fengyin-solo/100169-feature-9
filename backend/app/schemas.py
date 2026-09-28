@@ -28,6 +28,37 @@ class EntryPayload(BaseModel):
     remark: str | None = None
 
 
+class BatchResult(ActionResult):
+    """分批登记结果：合计不符时把提醒放进 warning，保存本身不被阻断。"""
+
+    warning: str | None = None
+    batch_total: int | None = None
+
+
+class HandoverPayload(BaseModel):
+    """批量交接请求：选中的装卸单 id 列表与目标班组。"""
+
+    ids: list[int] = Field(default_factory=list)
+    team: str | None = None
+
+
+class HandoverItem(BaseModel):
+    """单条装卸单的交接结论：成功或拒绝都要逐条说明。"""
+
+    id: int
+    label: str
+    ok: bool
+    message: str
+
+
+class HandoverResult(BaseModel):
+    """批量交接结果：整体结论加逐条明细。"""
+
+    ok: bool
+    message: str
+    results: list[HandoverItem] = Field(default_factory=list)
+
+
 
 class FlightEntry(BaseModel):
     """航班计划明细结构。"""
