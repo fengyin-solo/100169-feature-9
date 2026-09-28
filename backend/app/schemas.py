@@ -28,6 +28,38 @@ class EntryPayload(BaseModel):
     remark: str | None = None
 
 
+class BatchPayload(BaseModel):
+    """装卸单按车辆分批登记时提交的一批作业信息。"""
+
+    values: dict[str, Any] = Field(default_factory=dict)
+
+
+class HandoverPayload(BaseModel):
+    """多条装卸单一次交接给另一班组。"""
+
+    entry_ids: list[int] = Field(default_factory=list)
+    target_team: str = ""
+
+
+class BatchActionResult(BaseModel):
+    """分批登记结果：件数不符是提醒而不是错误，单独放在 warning 里。"""
+
+    ok: bool
+    message: str
+    warning: str = ""
+    entry: dict[str, Any] | None = None
+
+
+class HandoverResult(BaseModel):
+    """班组交接结果：失败时逐条列出每条装卸单被拒绝的原因。"""
+
+    ok: bool
+    message: str
+    errors: list[str] = Field(default_factory=list)
+    entry_ids: list[int] = Field(default_factory=list)
+    entries: list[dict[str, Any]] = Field(default_factory=list)
+
+
 
 class FlightEntry(BaseModel):
     """航班计划明细结构。"""
